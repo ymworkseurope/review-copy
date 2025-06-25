@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8">
+<title>YM WORKS – レビュー下書きコピー</title>
+<style>
+body{font-family:sans-serif;max-width:600px;margin:2rem auto;padding:0 1rem;line-height:1.7}
+textarea{width:100%;height:140px;margin-top:.5rem}
+button{margin-top:.8rem;padding:.6rem 1.2rem;font-size:1rem;cursor:pointer}
+h1{font-size:1.2rem;margin-bottom:.2rem}
+small{color:#444}
+</style>
+
+<h1>株式会社ワイエムコーポレーション / YM WORKS</h1>
+<small>アンケートご協力ありがとうございました。</small>
+<p>下書きをコピーして＜Googleクチコミ投稿画面＞に貼り付けていただけると助かります。内容は自由に編集できます。</p>
+
+<textarea id="txt"></textarea>
+<button id="copy">コピー</button>
+<a id="gbtn" target="_blank"><button>Googleレビューを開く</button></a>
+
+<script>
+const qs=new URLSearchParams(location.search);
+document.getElementById('txt').value=decodeURIComponent(qs.get('comment')||'');
+
+document.getElementById('copy').onclick=()=>{
+  navigator.clipboard.writeText(document.getElementById('txt').value)
+    .then(()=>alert('コピーしました！ご自由に編集してください'));
+};
+
+document.getElementById('gbtn').href=
+  'https://search.google.com/local/writereview?placeid=ChIJi36eeSgoAWARJd6g5QUce6k';
+</script>
