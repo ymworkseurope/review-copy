@@ -1,30 +1,63 @@
-<!doctype html><meta charset="utf-8">
-<title>YM WORKS – レビュー下書きコピー</title>
+<!doctype html>
+<meta charset="utf-8">
+<title>YM WORKS – レビュー下書きコピー（検証用）</title>
 <style>
-body{font-family:sans-serif;max-width:600px;margin:2rem auto;padding:0 1rem;line-height:1.7}
+body{font-family:sans-serif;max-width:620px;margin:2rem auto;padding:0 1rem;line-height:1.7}
 textarea{width:100%;height:140px;margin-top:.5rem}
 button{margin-top:.8rem;padding:.6rem 1.2rem;font-size:1rem;cursor:pointer}
-h1{font-size:1.2rem;margin-bottom:.2rem}
+h1{font-size:1.4rem;margin-bottom:.4rem}
 small{color:#444}
+.hidden{display:none}
 </style>
 
 <h1>株式会社ワイエムコーポレーション / YM WORKS</h1>
 <small>アンケートご協力ありがとうございました。</small>
-<p>下書きをコピーして＜Googleクチコミ投稿画面＞に貼り付けていただけると助かります。内容は自由に編集できます。</p>
 
-<textarea id="txt"></textarea>
+<p id="normalMsg">
+  下書きをコピーして＜Googleクチコミ投稿画面＞に貼り付けていただけると助かります。内容は自由に編集できます。
+</p>
+<p id="lowMsg" class="hidden" style="color:#c00;">
+  ご不満点を直接お伺いします。<br>
+  <a href="mailto:support@example.com">support@example.com</a> までご連絡ください。
+</p>
+
+<textarea id="txt"></textarea><br>
+
 <button id="copy">コピー</button>
 <a id="gbtn" target="_blank"><button>Googleレビューを開く</button></a>
 
 <script>
-const qs=new URLSearchParams(location.search);
-document.getElementById('txt').value=decodeURIComponent(qs.get('comment')||'');
+/* -------- パラメータ取得 -------- */
+const qs  = new URLSearchParams(location.search);
+const comment = decodeURIComponent(qs.get('comment') || '');
+const rating  = Number(qs.get('rating') || 0);      // 1〜5 が入る想定
 
-document.getElementById('copy').onclick=()=>{
-  navigator.clipboard.writeText(document.getElementById('txt').value)
-    .then(()=>alert('コピーしました！ご自由に編集してください'));
+/* -------- DOM 取得 -------- */
+const txt   = document.getElementById('txt');
+const copy  = document.getElementById('copy');
+const gbtn  = document.getElementById('gbtn');
+const msgN  = document.getElementById('normalMsg');
+const msgL  = document.getElementById('lowMsg');
+
+/* -------- コメント表示 -------- */
+txt.value = comment;
+
+/* -------- コピー処理 -------- */
+copy.onclick = () => {
+  navigator.clipboard.writeText(txt.value)
+    .then(()=>alert('コピーしました！内容は自由に編集できます。'));
 };
 
-document.getElementById('gbtn').href=
-  'https://search.google.com/local/writereview?placeid=ChIJi36eeSgoAWARJd6g5QUce6k';
+/* -------- Google レビューリンク -------- */
+gbtn.href = 'https://search.google.com/local/writereview?placeid=ChIJi36eeSgoAWARJd6g5QUce6k';
+
+/* -------- ★評価による分岐（※ポリシー違反。検証専用） -------- */
+if (rating >= 4) {            // ★4以上：通常UI
+  // 何も隠さない
+} else {                      // ★3以下：コピー＆Googleボタンを隠し、内部連絡表示
+  copy.classList.add('hidden');
+  gbtn.classList.add('hidden');
+  msgN.classList.add('hidden');
+  msgL.classList.remove('hidden');
+}
 </script>
