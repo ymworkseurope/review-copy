@@ -2,24 +2,225 @@
 <meta charset="utf-8">
 <title>ワイエムワークス – アンケートありがとうございました</title>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;max-width:560px;margin:4rem auto;padding:0 32px;line-height:1.6;color:#1d1d1f;background:#fff}
-textarea{width:100%;height:100px;margin-top:24px;border:1px solid #d2d2d7;border-radius:12px;padding:16px;font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:16px;color:#1d1d1f;background:#fbfbfd;resize:vertical;outline:none;transition:border-color 0.2s ease;box-sizing:border-box}
-textarea:focus{border-color:#0071e3;box-shadow:0 0 0 4px rgba(0,113,227,0.1)}
-button{margin-top:24px;padding:12px 32px;font-size:17px;font-weight:400;cursor:pointer;border:none;border-radius:12px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s ease;margin-right:12px;min-height:44px}
-button.primary{background:#0071e3;color:white}
-button.primary:hover{background:#0056b3;transform:translateY(-1px)}
-button.primary:active{transform:translateY(0)}
-button.secondary{background:#f5f5f7;color:#1d1d1f;border:1px solid #d2d2d7}
-button.secondary:hover{background:#e8e8ed}
-button.copied{background:#30d158;color:white}
-button.copied:hover{background:#28cd4f}
-button:disabled{background:#f5f5f7;color:#86868b;cursor:not-allowed;border:1px solid #d2d2d7}
-button:disabled:hover{background:#f5f5f7;transform:none}
-h1{font-size:32px;font-weight:600;margin-bottom:8px;color:#1d1d1f;letter-spacing:-0.5px}
-small{color:#86868b;font-size:17px;font-weight:400}
-.high{color:#1d1d1f;font-size:17px;margin:32px 0;line-height:1.5;font-weight:400}
-.low{color:#86868b;font-size:17px;margin:32px 0;line-height:1.5;font-weight:400}
-.hidden{display:none}
+/* カラーシステムの改善 - Apple HIG準拠 */
+:root {
+  /* Primary Colors */
+  --color-primary: #0071e3;
+  --color-primary-hover: #0077ED;
+  
+  /* Success */
+  --color-success: #34c759;
+  --color-success-hover: #30d158;
+  
+  /* Text Colors - 元のデザインを尊重 */
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #86868b;
+  
+  /* Background */
+  --color-bg-primary: #fff;
+  --color-bg-secondary: #f5f5f7;
+  --color-bg-input: #fbfbfd;
+  
+  /* Border */
+  --color-border: #d2d2d7;
+  --color-border-hover: #86868b;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text-primary: #f5f5f7;
+    --color-text-secondary: #a1a1a6;
+    --color-bg-primary: #000;
+    --color-bg-secondary: #1d1d1f;
+    --color-bg-input: #2c2c2e;
+    --color-border: #424245;
+    --color-border-hover: #7a7a7c;
+  }
+}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
+  max-width:560px;
+  margin:4rem auto;
+  padding:0 32px;
+  line-height:1.6;
+  color:var(--color-text-primary);
+  background:var(--color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+textarea{
+  width:100%;
+  height:100px;
+  margin-top:24px;
+  border:1px solid var(--color-border);
+  border-radius:12px;
+  padding:16px;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  font-size:16px;
+  color:var(--color-text-primary);
+  background:var(--color-bg-input);
+  resize:vertical;
+  outline:none;
+  transition:border-color 0.2s ease, background-color 0.2s ease;
+  box-sizing:border-box
+}
+
+textarea:hover{
+  border-color:var(--color-border-hover);
+}
+
+textarea:focus{
+  border-color:var(--color-primary);
+  background:var(--color-bg-primary);
+  box-shadow:0 0 0 4px rgba(0,113,227,0.1)
+}
+
+button{
+  margin-top:24px;
+  padding:12px 32px;
+  font-size:17px;
+  font-weight:400;
+  cursor:pointer;
+  border:none;
+  border-radius:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition:all 0.2s ease;
+  margin-right:12px;
+  min-height:44px
+}
+
+button.primary{
+  background:var(--color-primary);
+  color:white
+}
+
+button.primary:hover{
+  background:var(--color-primary-hover);
+  transform:translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,113,227,0.15);
+}
+
+button.primary:active{
+  transform:translateY(0)
+}
+
+button.secondary{
+  background:var(--color-bg-secondary);
+  color:var(--color-text-primary);
+  border:1px solid var(--color-border)
+}
+
+button.secondary:hover{
+  background:#e8e8ed;
+  border-color:var(--color-border-hover);
+}
+
+button.copied{
+  background:var(--color-success);
+  color:white
+}
+
+button.copied:hover{
+  background:var(--color-success-hover)
+}
+
+button:disabled{
+  background:var(--color-bg-secondary);
+  color:var(--color-text-secondary);
+  cursor:not-allowed;
+  border:1px solid var(--color-border);
+  opacity: 0.6;
+}
+
+button:disabled:hover{
+  background:var(--color-bg-secondary);
+  transform:none;
+  box-shadow: none;
+}
+
+h1{
+  font-size:32px;
+  font-weight:600;
+  margin-bottom:8px;
+  color:var(--color-text-primary);
+  letter-spacing:-0.5px
+}
+
+small{
+  color:var(--color-text-secondary);
+  font-size:17px;
+  font-weight:400
+}
+
+.high{
+  color:var(--color-text-primary);
+  font-size:17px;
+  margin:32px 0;
+  line-height:1.5;
+  font-weight:400
+}
+
+.low{
+  color:var(--color-text-secondary);
+  font-size:17px;
+  margin:32px 0;
+  line-height:1.5;
+  font-weight:400
+}
+
+.low a {
+  color:var(--color-primary);
+  text-decoration:none;
+  font-weight:400;
+  transition: opacity 0.2s ease;
+}
+
+.low a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.hidden{
+  display:none
+}
+
+/* Helper text styling */
+.helper-text{
+  margin-top:24px;
+  color:var(--color-text-secondary);
+  font-size:15px;
+  font-weight:400;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  body {
+    margin: 2rem auto;
+    padding: 0 20px;
+  }
+  
+  button {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  button:last-of-type {
+    margin-bottom: 0;
+  }
+}
 </style>
 <h1>ワイエムワークス</h1>
 <small>アンケートへのご協力、誠にありがとうございました。</small>
@@ -33,9 +234,9 @@ small{color:#86868b;font-size:17px;font-weight:400}
 <!-- ★1-3 用 -->
 <p id="lowMsg" class="low hidden">
   この度はご期待に添えず、申し訳ございませんでした。<br>
-  改善のため <a href="mailto:admin@ymworks.com" style="color:#0071e3;text-decoration:none;font-weight:400">admin@ymworks.com</a> までご意見をお寄せください。
+  改善のため <a href="mailto:admin@ymworks.com">admin@ymworks.com</a> までご意見をお寄せください。
 </p>
-<p style="margin-top:24px;color:#86868b;font-size:15px;font-weight:400;">
+<p class="helper-text">
   投稿内容は自由に編集していただけます
 </p>
 <textarea id="txt"></textarea><br>
@@ -80,7 +281,26 @@ copy.onclick = () => {
           copy.className = 'primary';
         }, 3000);
       })
-      .catch(() => alert('コピーに失敗しました'));
+      .catch(() => {
+        // フォールバック処理を追加
+        txt.select();
+        try {
+          document.execCommand('copy');
+          copy.textContent = '✅ コピー完了';
+          copy.className = 'copied';
+          
+          btn.disabled = false;
+          btn.textContent = 'Googleクチコミを書く';
+          btn.className = 'primary';
+          
+          setTimeout(() => {
+            copy.textContent = '📋 レビューをコピー';
+            copy.className = 'primary';
+          }, 3000);
+        } catch(err) {
+          alert('コピーに失敗しました');
+        }
+      });
   } else {
     alert('コピーするテキストがありません');
   }
