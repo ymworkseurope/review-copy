@@ -1,63 +1,94 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>YM WORKS – レビュー下書きコピー（検証用）</title>
+<title>YM WORKS – アンケートありがとうございました</title>
 <style>
-body{font-family:sans-serif;max-width:620px;margin:2rem auto;padding:0 1rem;line-height:1.7}
-textarea{width:100%;height:140px;margin-top:.5rem}
-button{margin-top:.8rem;padding:.6rem 1.2rem;font-size:1rem;cursor:pointer}
-h1{font-size:1.4rem;margin-bottom:.4rem}
-small{color:#444}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:2rem auto;padding:0 24px;line-height:1.6;color:#2c3e50;background:#fff}
+textarea{width:100%;height:120px;margin-top:16px;border:2px solid #e8eef7;border-radius:8px;padding:16px;font-family:inherit;font-size:16px;color:#2c3e50;background:#fafbfc;resize:vertical;outline:none;transition:all 0.2s ease;box-sizing:border-box}
+textarea:focus{border-color:#3498db;box-shadow:0 0 0 3px rgba(52,152,219,0.1);background:#fff}
+button{margin-top:24px;padding:12px 28px;font-size:15px;font-weight:600;cursor:pointer;border:none;border-radius:6px;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s ease;margin-right:12px;height:44px;text-transform:none;letter-spacing:0.3px}
+button.primary{background:linear-gradient(135deg, #3498db 0%, #2980b9 100%);color:white;box-shadow:0 2px 8px rgba(52,152,219,0.3)}
+button.primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(52,152,219,0.4)}
+button.primary:active{transform:translateY(0);box-shadow:0 2px 6px rgba(52,152,219,0.3)}
+button.secondary{background:#fff;color:#3498db;border:2px solid #3498db}
+button.secondary:hover{background:#3498db;color:white;transform:translateY(-1px)}
+button.copied{background:linear-gradient(135deg, #27ae60 0%, #229954 100%);color:white;box-shadow:0 2px 8px rgba(39,174,96,0.3)}
+button.copied:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(39,174,96,0.4)}
+h1{font-size:28px;font-weight:700;margin-bottom:12px;color:#2c3e50;letter-spacing:-0.2px}
+small{color:#7f8c8d;font-size:16px;font-weight:400}
+small{color:#5f6368;font-size:14px;font-weight:400}
+button:disabled{background:#ecf0f1;color:#95a5a6;cursor:not-allowed;border:2px solid #ecf0f1}
+button:disabled:hover{background:#ecf0f1;box-shadow:none;transform:none}
+.high{color:#27ae60;font-size:16px;margin:20px 0;line-height:1.5;font-weight:500}
+.low{color:#5f6368;font-size:16px;margin:20px 0;line-height:1.5;font-weight:500}
 .hidden{display:none}
 </style>
-
-<h1>株式会社ワイエムコーポレーション / YM WORKS</h1>
-<small>アンケートご協力ありがとうございました。</small>
-
-<p id="normalMsg">
-  下書きをコピーして＜Googleクチコミ投稿画面＞に貼り付けていただけると助かります。内容は自由に編集できます。
+<h1>ワイエムワークス</h1>
+<small>アンケートへのご協力、誠にありがとうございました。</small>
+<!-- ★4-5 用 -->
+<p id="highMsg" class="high hidden">
+  本日は愛車をお預けいただき、ありがとうございました！<br>
+  いいお店は、いい人が広めてくれる。<br>
+  車の楽しさを知っている方々のお役に立てるよう、当店を知ってもらえたら嬉しいです。<br>
+  よろしければ、下のレビューをコピーして投稿していただけませんか。
 </p>
-<p id="lowMsg" class="hidden" style="color:#c00;">
-  ご不満点を直接お伺いします。<br>
-  <a href="mailto:support@example.com">support@example.com</a> までご連絡ください。
+<!-- ★1-3 用 -->
+<p id="lowMsg" class="low hidden">
+  この度はご期待に添えず、申し訳ございませんでした。<br>
+  改善のため <a href="mailto:admin@ymworks.com" style="color:#3498db;text-decoration:none;font-weight:600">admin@ymworks.com</a> までご意見をお寄せください。
 </p>
-
+<p style="margin-top:16px;color:#7f8c8d;font-size:14px;font-weight:500;">
+  💡 投稿内容は自由に編集していただけます
+</p>
 <textarea id="txt"></textarea><br>
-
-<button id="copy">コピー</button>
-<a id="gbtn" target="_blank"><button>Googleレビューを開く</button></a>
-
+<button id="copy" class="primary">📋 レビューをコピー</button>
+<button id="gbtn" class="secondary" disabled>Googleクチコミを書く</button>
 <script>
 /* -------- パラメータ取得 -------- */
-const qs  = new URLSearchParams(location.search);
+const qs      = new URLSearchParams(location.search);
 const comment = decodeURIComponent(qs.get('comment') || '');
-const rating  = Number(qs.get('rating') || 0);      // 1〜5 が入る想定
-
-/* -------- DOM 取得 -------- */
-const txt   = document.getElementById('txt');
-const copy  = document.getElementById('copy');
-const gbtn  = document.getElementById('gbtn');
-const msgN  = document.getElementById('normalMsg');
-const msgL  = document.getElementById('lowMsg');
-
-/* -------- コメント表示 -------- */
+const rating  = Number(qs.get('rating')   || 0);   // 1〜5 を想定
+/* -------- DOM -------- */
+const txt  = document.getElementById('txt');
+const copy = document.getElementById('copy');
+const btn  = document.getElementById('gbtn');
+const hi   = document.getElementById('highMsg');
+const lo   = document.getElementById('lowMsg');
+let isCopied = false;
+/* -------- 初期表示 -------- */
 txt.value = comment;
-
+btn.onclick = () => {
+  window.open('https://search.google.com/local/writereview?placeid=' + PLACE_ID, '_blank');
+};
 /* -------- コピー処理 -------- */
 copy.onclick = () => {
-  navigator.clipboard.writeText(txt.value)
-    .then(()=>alert('コピーしました！内容は自由に編集できます。'));
+  if (txt.value.trim()) {
+    navigator.clipboard.writeText(txt.value)
+      .then(() => {
+        // コピー完了のフィードバック
+        copy.textContent = '✅ コピー完了';
+        copy.className = 'copied';
+        isCopied = true;
+        
+        // Googleレビューボタンを有効化
+        btn.disabled = false;
+        btn.textContent = 'Googleクチコミを書く';
+        btn.className = 'primary';
+        
+        // 3秒後に元に戻す
+        setTimeout(() => {
+          copy.textContent = '📋 レビューをコピー';
+          copy.className = 'primary';
+        }, 3000);
+      })
+      .catch(() => alert('コピーに失敗しました'));
+  } else {
+    alert('コピーするテキストがありません');
+  }
 };
-
-/* -------- Google レビューリンク -------- */
-gbtn.href = 'https://search.google.com/local/writereview?placeid=ChIJi36eeSgoAWARJd6g5QUce6k';
-
-/* -------- ★評価による分岐（※ポリシー違反。検証専用） -------- */
-if (rating >= 4) {            // ★4以上：通常UI
-  // 何も隠さない
-} else {                      // ★3以下：コピー＆Googleボタンを隠し、内部連絡表示
-  copy.classList.add('hidden');
-  gbtn.classList.add('hidden');
-  msgN.classList.add('hidden');
-  msgL.classList.remove('hidden');
+/* -------- フォローメッセージ分岐 -------- */
+if (rating >= 4) {
+  hi.classList.remove('hidden');   // 高評価メッセージ表示
+} else {
+  lo.classList.remove('hidden');   // 低評価メッセージ表示
 }
 </script>
