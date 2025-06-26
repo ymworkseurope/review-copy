@@ -123,7 +123,8 @@ button{
 
 button.primary{
   background:#0071e3;
-  color:white
+  color:white;
+  margin-right: 12px;
 }
 
 button.primary:hover{
@@ -234,21 +235,65 @@ small{
 .button-section {
   margin-top:0;
   margin-bottom:40px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
 }
 
-/* Button wrapper for helper text - 削除 */
-
-.button-helper {
-  font-size: 13px;
+/* Step flow indicator */
+.flow-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0;
+  font-size: 14px;
   color: #86868b;
-  margin: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.flow-indicator.show {
+  opacity: 1;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.flow-step.active {
+  color: #0071e3;
+  font-weight: 500;
+}
+
+.flow-step.completed {
+  color: #34c759;
+}
+
+.flow-arrow {
+  color: #d2d2d7;
+  font-size: 16px;
+}
+
+/* Copy instruction */
+.copy-instruction {
+  background: rgba(0, 113, 227, 0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #0071e3;
   display: none;
-  width: 100%;
-  padding-left: 4px;
+  align-items: center;
+  gap: 8px;
+}
+
+.copy-instruction.show {
+  display: flex;
+}
+
+/* Button helper text - 削除 */
+.button-helper {
+  display: none;
 }
 
 .button-helper.show {
@@ -383,7 +428,20 @@ button.primary.pulse {
 <div class="button-section">
   <button id="copy" class="primary">📋 レビューをコピー</button>
   <button id="gbtn" class="secondary" disabled>Googleクチコミを書く</button>
-  <p id="btnHelper" class="button-helper">📝 コピー済みのテキストを貼り付けるだけ</p>
+  
+  <!-- フローインジケーター（高評価時のみ） -->
+  <div id="flowIndicator" class="flow-indicator">
+    <span class="flow-step" id="flow1">① コピー</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step" id="flow2">② Googleで貼り付け</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step" id="flow3">③ 投稿完了</span>
+  </div>
+  
+  <!-- コピー後の説明（高評価時のみ） -->
+  <div id="copyInstruction" class="copy-instruction">
+    💡 コピーしたレビューをGoogleクチコミのページで貼り付けてください
+  </div>
 </div>
 <div id="toast" class="toast"></div>
 <script>
@@ -404,6 +462,11 @@ const stepIndicator = document.getElementById('stepIndicator');
 const step1 = document.getElementById('step1');
 const step2 = document.getElementById('step2');
 const step3 = document.getElementById('step3');
+const flowIndicator = document.getElementById('flowIndicator');
+const flow1 = document.getElementById('flow1');
+const flow2 = document.getElementById('flow2');
+const flow3 = document.getElementById('flow3');
+const copyInstruction = document.getElementById('copyInstruction');
 let isCopied = false;
 
 /* -------- Toast通知 -------- */
@@ -417,9 +480,6 @@ function showToast(message) {
 
 /* -------- 初期表示 -------- */
 txt.value = comment;
-btn.onclick = () => {
-  window.open('https://search.google.com/local/writereview?placeid=' + PLACE_ID, '_blank');
-};
 /* -------- コピー処理 -------- */
 copy.onclick = () => {
   if (txt.value.trim()) {
@@ -434,10 +494,12 @@ copy.onclick = () => {
         btn.disabled = false;
         btn.innerHTML = '→ Googleクチコミを書く';
         
-        // 高評価の場合のみパルスとヘルパーテキストを表示
+        // 高評価の場合のみパルスと説明を表示
         if (rating >= 4) {
           btn.className = 'primary pulse';
-          btnHelper.classList.add('show');
+          flow1.classList.add('completed');
+          flow2.classList.add('active');
+          copyInstruction.classList.add('show');
           step2.classList.add('completed');
           step3.classList.add('active');
         } else {
@@ -465,10 +527,12 @@ copy.onclick = () => {
           btn.disabled = false;
           btn.innerHTML = '→ Googleクチコミを書く';
           
-          // 高評価の場合のみパルスとヘルパーテキストを表示
+          // 高評価の場合のみパルスと説明を表示
           if (rating >= 4) {
             btn.className = 'primary pulse';
-            btnHelper.classList.add('show');
+            flow1.classList.add('completed');
+            flow2.classList.add('active');
+            copyInstruction.classList.add('show');
             step2.classList.add('completed');
             step3.classList.add('active');
           } else {
@@ -496,9 +560,22 @@ if (rating >= 4) {
   stepIndicator.classList.add('show');
   step1.classList.add('completed');
   step2.classList.add('active');
+  flowIndicator.classList.add('show');
 } else {
   lo.classList.remove('hidden');   // 低評価メッセージ表示
 }
+
+/* -------- Googleボタンクリック時 -------- */
+btn.onclick = () => {
+  window.open('https://search.google.com/local/writereview?placeid=' + PLACE_ID, '_blank');
+  
+  // 高評価の場合、フローを更新
+  if (rating >= 4) {
+    flow2.classList.add('completed');
+    flow3.classList.add('active');
+    copyInstruction.innerHTML = '✅ Googleクチコミのページが開きました。レビューを貼り付けて投稿してください';
+  }
+};
 
 /* -------- テキスト入力時の処理 -------- */
 txt.addEventListener('input', function() {
@@ -514,8 +591,12 @@ txt.addEventListener('input', function() {
     copy.disabled = false;
     isCopied = false;
     
-    // ステップ2を未完了に戻す
+    // フローをリセット
     if (rating >= 4) {
+      flow1.classList.remove('completed');
+      flow2.classList.remove('active', 'completed');
+      flow3.classList.remove('active');
+      copyInstruction.classList.remove('show');
       step2.classList.remove('completed');
       step3.classList.remove('active');
     }
