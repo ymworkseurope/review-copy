@@ -231,7 +231,7 @@ small{
 }
 
 .hidden{
-  display:none
+  display:none !important;
 }
 
 .helper-text{
@@ -527,6 +527,9 @@ if (rating >= 4) {
   step2.classList.add('active');
 } else {
   lo.classList.remove('hidden');   // 低評価メッセージ表示
+  // 低評価の場合は確実に特典を非表示
+  benefitNote.classList.add('hidden');
+  benefitNote.style.display = 'none';
 }
 
 /* -------- テキスト入力時の処理 -------- */
