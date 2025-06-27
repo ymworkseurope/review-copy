@@ -53,11 +53,17 @@ body{
   }
   
   .high {
-    background: rgba(52, 199, 89, 0.1);
+    background: rgba(52, 199, 89, 0.15);
+    color: #f5f5f7;
   }
   
   .low {
-    background: rgba(255, 149, 0, 0.1);
+    background: rgba(255, 149, 0, 0.15);
+    color: #f5f5f7;
+  }
+  
+  .low a {
+    color: #0a84ff;
   }
   
   .helper-text {
@@ -66,6 +72,11 @@ body{
   
   .button-helper {
     color: #8e8e93;
+  }
+  
+  .benefit-note {
+    background: rgba(255, 204, 0, 0.15);
+    color: #f5f5f7;
   }
   
   .step-number {
@@ -119,6 +130,7 @@ button{
   transition:all 0.2s ease;
   min-height:44px;
   white-space: nowrap;
+  margin-right: 12px;
 }
 
 button.primary{
@@ -225,34 +237,40 @@ small{
 .helper-text{
   margin-top:16px;
   margin-bottom:0;
-  color:#3c3c43;
-  font-size:15px;
+  color:#86868b;
+  font-size:14px;
   font-weight:400;
 }
 
 /* Button section */
 .button-section {
   margin-top:0;
-  margin-bottom:40px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
+  margin-bottom:32px;
 }
-
-/* Button wrapper for helper text - 削除 */
 
 .button-helper {
   font-size: 13px;
   color: #86868b;
-  margin: 0;
+  margin-top: 8px;
+  margin-left: 4px;
   display: none;
-  width: 100%;
-  padding-left: 4px;
 }
 
 .button-helper.show {
   display: block;
+}
+
+/* Benefit note */
+.benefit-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 12px 16px;
+  background: rgba(255, 204, 0, 0.08);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1d1d1f;
 }
 
 /* Focus visible for accessibility */
@@ -291,7 +309,7 @@ textarea:focus-visible {
   }
 }
 
-/* Button pulse animation - 仕様通り */
+/* Button pulse animation */
 @keyframes pulse {
   0% {
     box-shadow: 0 0 0 0 rgba(0, 113, 227, 0.4);
@@ -308,7 +326,7 @@ button.primary.pulse {
   animation: pulse 2s infinite;
 }
 
-/* ステップインジケーター - 非表示に */
+/* ステップインジケーター - 非表示 */
 .step-indicator {
   display: none;
 }
@@ -321,8 +339,7 @@ button.primary.pulse {
   }
   
   .button-section {
-    margin-top: 0;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
   
   button {
@@ -342,6 +359,8 @@ button.primary.pulse {
   }
 }
 </style>
+</head>
+<body>
 <h1>ワイエムワークス</h1>
 <small>アンケートへのご協力、誠にありがとうございました。</small>
 <!-- ★4-5 用 -->
@@ -383,8 +402,14 @@ button.primary.pulse {
 <div class="button-section">
   <button id="copy" class="primary">📋 レビューをコピー</button>
   <button id="gbtn" class="secondary" disabled>Googleクチコミを書く</button>
-  <p id="btnHelper" class="button-helper">📝 コピー済みのテキストを貼り付けるだけ</p>
+  <p id="btnHelper" class="button-helper">コピーした内容を貼り付けるだけ</p>
 </div>
+
+<!-- 特典告知（高評価時のみ） -->
+<div id="benefitNote" class="benefit-note hidden">
+  🎁 投稿いただいたお客様は、ぜひスタッフにお声がけください
+</div>
+
 <div id="toast" class="toast"></div>
 <script>
 const PLACE_ID = 'ChIJi36eeSgoAWARJd6g5QUce6k';   // 自社 Place ID に差し替え
@@ -400,6 +425,7 @@ const hi   = document.getElementById('highMsg');
 const lo   = document.getElementById('lowMsg');
 const toast = document.getElementById('toast');
 const btnHelper = document.getElementById('btnHelper');
+const benefitNote = document.getElementById('benefitNote');
 const stepIndicator = document.getElementById('stepIndicator');
 const step1 = document.getElementById('step1');
 const step2 = document.getElementById('step2');
@@ -417,9 +443,12 @@ function showToast(message) {
 
 /* -------- 初期表示 -------- */
 txt.value = comment;
+
+/* -------- Googleボタンクリック時 -------- */
 btn.onclick = () => {
   window.open('https://search.google.com/local/writereview?placeid=' + PLACE_ID, '_blank');
 };
+
 /* -------- コピー処理 -------- */
 copy.onclick = () => {
   if (txt.value.trim()) {
@@ -430,7 +459,7 @@ copy.onclick = () => {
         copy.className = 'copied';
         isCopied = true;
         
-        // Googleレビューボタンを有効化（高評価の場合のみ）
+        // Googleレビューボタンを有効化
         btn.disabled = false;
         btn.innerHTML = '→ Googleクチコミを書く';
         
@@ -451,11 +480,10 @@ copy.onclick = () => {
         setTimeout(() => {
           copy.innerHTML = '✓ コピー済み';
           copy.className = 'secondary';
-          // disabledは削除して、再度コピー可能にする
         }, 3000);
       })
       .catch(() => {
-        // フォールバック処理を追加
+        // フォールバック処理
         txt.select();
         try {
           document.execCommand('copy');
@@ -480,7 +508,6 @@ copy.onclick = () => {
           setTimeout(() => {
             copy.innerHTML = '✓ コピー済み';
             copy.className = 'secondary';
-            // disabledは削除して、再度コピー可能にする
           }, 3000);
         } catch(err) {
           showToast('コピーに失敗しました');
@@ -490,9 +517,11 @@ copy.onclick = () => {
     showToast('コピーするテキストがありません');
   }
 };
+
 /* -------- フォローメッセージ分岐 -------- */
 if (rating >= 4) {
   hi.classList.remove('hidden');   // 高評価メッセージ表示
+  benefitNote.classList.remove('hidden');  // 特典表示
   stepIndicator.classList.add('show');
   step1.classList.add('completed');
   step2.classList.add('active');
@@ -514,6 +543,9 @@ txt.addEventListener('input', function() {
     copy.disabled = false;
     isCopied = false;
     
+    // ヘルパーを非表示に
+    btnHelper.classList.remove('show');
+    
     // ステップ2を未完了に戻す
     if (rating >= 4) {
       step2.classList.remove('completed');
@@ -522,3 +554,5 @@ txt.addEventListener('input', function() {
   }
 });
 </script>
+</body>
+</html>
